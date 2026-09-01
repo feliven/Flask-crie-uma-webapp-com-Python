@@ -10,7 +10,8 @@ def ola():
 
 @app.route("/lista")
 def lista():
-    return render_template("lista.html", title="Lista")
+    listaJogos = ["God of War", "Skyrim", "Valorant"]
+    return render_template("lista.html", titulo="Lista", jogos=listaJogos)
 
 
-app.run()
+app.run(debug=True)
