@@ -1,8 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for
 
-app = Flask(__name__)
-app.secret_key = "CHAVE"
-
 
 class Jogo:
     def __init__(self, nome, categoria, console) -> None:
@@ -14,6 +11,22 @@ class Jogo:
 jogo1 = Jogo(nome="Tetris", categoria="Puzzle", console="Atari 2600")
 jogo2 = Jogo(nome="Hollow Knight", categoria="Metroidvania", console="PS5")
 listaJogos = [jogo1, jogo2]
+
+
+class Usuario:
+    def __init__(self, nome, nickname, senha) -> None:
+        self.nome = nome
+        self.nickname = nickname
+        self.senha = senha
+
+
+usuario1 = Usuario("Felipe", "fvs", "1234")
+usuario2 = Usuario("Bruno", "bd", "asdf")
+usuario3 = Usuario("Laila", "dog", "hjkl")
+listaUsuarios = [usuario1, usuario2, usuario3]
+
+app = Flask(__name__)
+app.secret_key = "CHAVE"
 
 
 @app.route("/")
@@ -48,11 +61,17 @@ def login():
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
     proxima_pagina = request.form["proxima"]
-    print(proxima_pagina)
 
-    if "alohomora" == request.form["senha"]:
-        session["usuario_logado"] = request.form["usuario"]
-        flash(f'Usuário {session["usuario_logado"]} logado com sucesso')
+    nickname = request.form["usuario"]
+    senha = request.form["senha"]
+    listaNicknames = [usuario.nickname for usuario in listaUsuarios]
+    listaSenhas = [usuario.senha for usuario in listaUsuarios]
+
+    if (nickname in listaNicknames) and (
+        listaNicknames.index(nickname) == listaSenhas.index(senha)
+    ):
+        session["usuario_logado"] = nickname
+        flash(f"Usuário {nickname} logado com sucesso")
         return (
             redirect(proxima_pagina) if proxima_pagina else redirect(url_for("index"))
         )
