@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jogoteca</title>
-    <link rel="stylesheet" href="/static/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
   </head>
   <body>
     <div class="container">
@@ -13,6 +13,6 @@
       </div>
       {% block conteudo %}{% endblock %}
     </div>
-    <script src="/static/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
   </body>
 </html>
