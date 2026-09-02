@@ -3,14 +3,16 @@ from mysql.connector import errorcode
 
 print("Conectando...")
 try:
-    conn = mysql.connector.connect(host="127.0.0.1", user="root", password="admin")
+    conn = mysql.connector.connect(host="127.0.0.1", user="root", password="")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
         print("Existe algo errado no nome de usuário ou senha")
+        raise SystemExit(1) from err
     else:
         print(err)
+        raise
 
-cursor = conn.cursor()
+cursor = conn.cursor(dictionary=True)
 
 cursor.execute("DROP DATABASE IF EXISTS `jogoteca`;")
 
@@ -50,7 +52,7 @@ for tabela_nome in TABLES:
     else:
         print("OK")
 
-# inserindo usuarios
+# inserindo usuários
 usuario_sql = "INSERT INTO usuarios (nome, nickname, senha) VALUES (%s, %s, %s)"
 usuarios = [
     ("Felipe", "fvs", "1234"),
@@ -62,7 +64,10 @@ cursor.executemany(usuario_sql, usuarios)
 cursor.execute("select * from jogoteca.usuarios")
 print(" -------------  Usuários:  -------------")
 for user in cursor.fetchall():
-    print(user[1])
+    if isinstance(user, dict):
+        print(user["nickname"])
+    else:
+        print(user[1])
 
 # inserindo jogos
 jogos_sql = "INSERT INTO jogos (nome, categoria, console) VALUES (%s, %s, %s)"
@@ -81,9 +86,12 @@ cursor.executemany(jogos_sql, jogos)
 cursor.execute("select * from jogoteca.jogos")
 print(" -------------  Jogos:  -------------")
 for jogo in cursor.fetchall():
-    print(jogo[1])
+    if isinstance(jogo, dict):
+        print(jogo["nome"])
+    else:
+        print(jogo[1])
 
-# commitando se não nada tem efeito
+# commitando, senão nada tem efeito
 conn.commit()
 
 cursor.close()
