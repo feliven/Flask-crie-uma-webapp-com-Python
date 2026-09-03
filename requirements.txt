@@ -1,9 +1,12 @@
 blinker
 click
 Flask
+Flask-SQLAlchemy
 itsdangerous
 Jinja2
 MarkupSafe
 mysql-connector-python
 mysqlclient
+SQLAlchemy
+typing_extensions
 Werkzeug
