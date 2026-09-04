@@ -37,7 +37,7 @@ def criar():
 @app.route("/editar-jogo/<int:id>")
 def editar_jogo(id):
     if ("usuario_logado" not in session) or (session["usuario_logado"] is None):
-        return redirect(url_for("login", proxima=url_for("editar_jogo")))
+        return redirect(url_for("login"))
 
     jogo = Jogos.query.filter_by(id=id).first()
 
@@ -56,6 +56,18 @@ def atualizar():
 
         db.session.add(jogo)
         db.session.commit()
+
+    return redirect(url_for("index"))
+
+
+@app.route("/deletar-jogo/<int:id>")
+def deletar_jogo(id):
+    if ("usuario_logado" not in session) or (session["usuario_logado"] is None):
+        return redirect(url_for("login"))
+
+    Jogos.query.filter_by(id=id).delete()
+
+    db.session.commit()
 
     return redirect(url_for("index"))
 
