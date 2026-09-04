@@ -31,6 +31,9 @@ def criar():
     db.session.add(novo_jogo)
     db.session.commit()
 
+    imagem = request.files["imagem"]
+    imagem.save(f"uploads/{imagem.filename}")
+
     return redirect(url_for("index"))
 
 
