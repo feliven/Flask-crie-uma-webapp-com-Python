@@ -11,7 +11,7 @@ from flask import (
 )
 from jogoteca import app, db
 from models import Jogos, Usuarios
-from helpers import recupera_imagem
+from helpers import recupera_imagem, deleta_imagem
 
 
 @app.route("/")
@@ -82,6 +82,7 @@ def atualizar():
         imagem = request.files["imagem"]
         extensao = Path(imagem.filename).suffix if imagem.filename else ""
         timestamp = time.time()
+        deleta_imagem(jogo.id)
         imagem.save(f"{upload_path}/capa{jogo.id}-{timestamp}{extensao}")
 
     return redirect(url_for("index"))
