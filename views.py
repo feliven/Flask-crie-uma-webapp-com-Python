@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 from flask import (
     render_template,
@@ -44,7 +45,8 @@ def criar():
     upload_path = app.config["UPLOAD_PATH"]
     imagem = request.files["imagem"]
     extensao = Path(imagem.filename).suffix if imagem.filename else ""
-    imagem.save(f"{upload_path}/capa{novo_jogo.id}{extensao}")
+    timestamp = time.time()
+    imagem.save(f"{upload_path}/capa{novo_jogo.id}-{timestamp}{extensao}")
 
     return redirect(url_for("index"))
 
@@ -79,7 +81,8 @@ def atualizar():
         upload_path = app.config["UPLOAD_PATH"]
         imagem = request.files["imagem"]
         extensao = Path(imagem.filename).suffix if imagem.filename else ""
-        imagem.save(f"{upload_path}/capa{jogo.id}{extensao}")
+        timestamp = time.time()
+        imagem.save(f"{upload_path}/capa{jogo.id}-{timestamp}{extensao}")
 
     return redirect(url_for("index"))
 
