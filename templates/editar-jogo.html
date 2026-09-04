@@ -1,6 +1,13 @@
 {% extends "template.html" %} {% block conteudo %}
-<form method="post" action="{{ url_for('atualizar') }}">
-  <fieldset>
+<form method="post" action="{{ url_for('atualizar') }}" enctype="multipart/form-data" class="d-flex gap-4">
+  <figure class="img-thumbnail col-md-4">
+    <img src="{{ url_for('imagem', nome_arquivo=capa_jogo) }}" alt="" class="img-fluid" />
+    <figcaption>
+      <label for="capa" class="file-container">Mudar capa</label>
+      <input type="file" name="imagem" id="capa" accept=".jpg,.png" />
+    </figcaption>
+  </figure>
+  <fieldset class="d-flex flex-column gap-3 col-md-8">
     <input type="hidden" name="id" value="{{ jogo.id }}" />
     <div class="form-group">
       <label for="nome">Nome</label>

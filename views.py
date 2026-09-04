@@ -10,6 +10,7 @@ from flask import (
 )
 from jogoteca import app, db
 from models import Jogos, Usuarios
+from helpers import recupera_imagem
 
 
 @app.route("/")
@@ -55,7 +56,11 @@ def editar_jogo(id):
 
     jogo = Jogos.query.filter_by(id=id).first()
 
-    return render_template("editar-jogo.html", titulo="Editar jogo", jogo=jogo)
+    capa_jogo = recupera_imagem(id)
+
+    return render_template(
+        "editar-jogo.html", titulo="Editar jogo", jogo=jogo, capa_jogo=capa_jogo
+    )
 
 
 @app.route("/atualizar", methods=["POST"])
@@ -70,6 +75,11 @@ def atualizar():
 
         db.session.add(jogo)
         db.session.commit()
+
+        upload_path = app.config["UPLOAD_PATH"]
+        imagem = request.files["imagem"]
+        extensao = Path(imagem.filename).suffix if imagem.filename else ""
+        imagem.save(f"{upload_path}/capa{jogo.id}{extensao}")
 
     return redirect(url_for("index"))
 
