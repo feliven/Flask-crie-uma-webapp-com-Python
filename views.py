@@ -1,3 +1,4 @@
+from pathlib import Path
 from flask import render_template, request, redirect, session, flash, url_for
 from jogoteca import app, db
 from models import Jogos, Usuarios
@@ -31,8 +32,10 @@ def criar():
     db.session.add(novo_jogo)
     db.session.commit()
 
+    upload_path = app.config["UPLOAD_PATH"]
     imagem = request.files["imagem"]
-    imagem.save(f"uploads/{imagem.filename}")
+    extensao = Path(imagem.filename).suffix if imagem.filename else ""
+    imagem.save(f"{upload_path}/capa{novo_jogo.id}{extensao}")
 
     return redirect(url_for("index"))
 
