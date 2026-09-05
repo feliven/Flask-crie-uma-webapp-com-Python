@@ -11,7 +11,7 @@ from flask import (
 )
 from jogoteca import app, db
 from models import Jogos, Usuarios
-from helpers import recupera_imagem, deleta_imagem, FormularioJogo
+from helpers import recupera_imagem, deleta_imagem, FormularioJogo, FormularioUsuario
 
 
 @app.route("/")
@@ -135,17 +135,28 @@ def imagem(nome_arquivo):
 @app.route("/login")
 def login():
     proxima = request.args.get("proxima") or "/"
-    return render_template("login.html", titulo="Faça seu login", proxima=proxima)
+
+    form = FormularioUsuario()
+
+    return render_template(
+        "login.html", titulo="Faça seu login", proxima=proxima, form=form
+    )
 
 
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
+    form = FormularioUsuario(request.form)
+
+    if not form.validate_on_submit():
+        flash("Dados inválidos no formulário")
+        return redirect(url_for("login"))
+
     proxima_pagina = request.form["proxima"]
 
     listaUsuarios = Usuarios.query.order_by(Usuarios.nickname)
 
-    nickname = request.form["usuario"]
-    senha = request.form["senha"]
+    nickname = form.nickname.data
+    senha = form.senha.data
     listaNicknames = [usuario.nickname for usuario in listaUsuarios]
     listaSenhas = [usuario.senha for usuario in listaUsuarios]
 

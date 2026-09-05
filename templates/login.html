@@ -1,10 +1,11 @@
 {% extends "template.html" %} {% block conteudo %}
 <form method="POST" action="{{ url_for('autenticar') }}">
+  {{ form.hidden_tag() }}
   <input type="hidden" name="proxima" value="{{ proxima }}" />
-  <p><label>Nome de usuário:</label> <input class="form-control" type="text" name="usuario" required /></p>
-  <p><label>Senha:</label> <input class="form-control" type="password" name="senha" required /></p>
+  <p>{{ form.nickname.label(class="form-label") }} {{ form.nickname(class="form-control") }}</p>
+  <p>{{ form.senha.label(class="form-label") }} {{ form.senha(class="form-control") }}</p>
   <div class="d-flex gap-3">
-    <button class="btn btn-primary" type="submit">Entrar</button>
+    {{ form.login(class="btn btn-primary") }}
     <a class="btn btn-danger" href="{{ url_for('index') }}">Voltar</a>
   </div>
 </form>
