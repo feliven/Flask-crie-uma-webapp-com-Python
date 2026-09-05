@@ -1,6 +1,8 @@
+bcrypt
 blinker
 click
 Flask
+Flask-Bcrypt
 Flask-SQLAlchemy
 Flask-WTF
 itsdangerous

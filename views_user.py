@@ -1,4 +1,5 @@
 from flask import flash, redirect, render_template, request, session, url_for
+from flask_bcrypt import check_password_hash
 from app import app
 from models import Usuarios
 from helpers import FormularioUsuario
@@ -25,17 +26,18 @@ def autenticar():
 
     proxima_pagina = request.form["proxima"]
 
-    listaUsuarios = Usuarios.query.order_by(Usuarios.nickname)
+    lista_usuarios = Usuarios.query.order_by(Usuarios.nickname)
 
     nickname = form.nickname.data
     senha = form.senha.data
-    listaNicknames = [usuario.nickname for usuario in listaUsuarios]
-    listaSenhas = [usuario.senha for usuario in listaUsuarios]
+    lista_nicknames = [usuario.nickname for usuario in lista_usuarios]
+    lista_senhas = [usuario.senha for usuario in lista_usuarios]
 
     try:
-        if (nickname in listaNicknames) and (
-            listaNicknames.index(nickname) == listaSenhas.index(senha)
-        ):
+        index_nickname = lista_nicknames.index(nickname)
+        senha_para_checar = lista_senhas[index_nickname]
+
+        if check_password_hash(senha_para_checar, senha):
             session["usuario_logado"] = nickname
             flash(f"Usuário {nickname} logado com sucesso")
             return (
@@ -44,7 +46,7 @@ def autenticar():
                 else redirect(url_for("index"))
             )
         else:
-            flash("Usuário não logado")
+            flash("Senha incorreta")
             return redirect(url_for("login"))
     except Exception:
         flash("Erro no login")
