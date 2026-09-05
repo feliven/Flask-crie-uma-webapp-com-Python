@@ -1,6 +1,5 @@
 {% extends "template.html" %} {% block conteudo %}
 <form method="post" action="{{ url_for('atualizar') }}" enctype="multipart/form-data" class="d-flex gap-4">
-  {{ form.hidden_tag() }}
   <figure class="img-thumbnail col-md-4">
     <img src="{{ url_for('imagem', nome_arquivo=capa_jogo) }}" alt="" class="img-fluid" />
     <figcaption>
@@ -9,6 +8,7 @@
     </figcaption>
   </figure>
   <fieldset class="d-flex flex-column gap-3 col-md-8">
+    {{ form.csrf_token() }}
     <input type="hidden" name="id" value="{{ id }}" />
     <div class="form-group">{{ form.nome.label(class="form-label") }} {{ form.nome(class="form-control") }}</div>
     <div class="form-group">
