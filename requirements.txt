@@ -2,6 +2,7 @@ blinker
 click
 Flask
 Flask-SQLAlchemy
+Flask-WTF
 itsdangerous
 Jinja2
 MarkupSafe
@@ -10,3 +11,4 @@ mysqlclient
 SQLAlchemy
 typing_extensions
 Werkzeug
+WTForms

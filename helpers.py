@@ -1,5 +1,20 @@
 import os
 from jogoteca import app
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, validators
+
+
+class FormularioJogo(FlaskForm):
+    nome = StringField(
+        "Nome do jogo", [validators.data_required(), validators.length(1, 50)]
+    )
+    categoria = StringField(
+        "Categoria", [validators.data_required(), validators.length(1, 40)]
+    )
+    console = StringField(
+        "Plataforma", [validators.data_required(), validators.length(1, 20)]
+    )
+    salvar = SubmitField()
 
 
 def recupera_imagem(id):

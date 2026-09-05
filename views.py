@@ -11,7 +11,7 @@ from flask import (
 )
 from jogoteca import app, db
 from models import Jogos, Usuarios
-from helpers import recupera_imagem, deleta_imagem
+from helpers import recupera_imagem, deleta_imagem, FormularioJogo
 
 
 @app.route("/")
@@ -25,14 +25,22 @@ def adicionar_jogo():
     if ("usuario_logado" not in session) or (session["usuario_logado"] is None):
         return redirect(url_for("login", proxima=url_for("adicionar_jogo")))
 
-    return render_template("adicionar-jogo.html", titulo="Novo jogo")
+    form = FormularioJogo()
+
+    return render_template("adicionar-jogo.html", titulo="Novo jogo", form=form)
 
 
 @app.route("/criar", methods=["POST"])
 def criar():
-    nome = request.form["nome"]
-    categoria = request.form["categoria"]
-    console = request.form["console"]
+    form = FormularioJogo()
+
+    if not form.validate_on_submit():
+        flash("Dados inválidos no formulário")
+        return redirect(url_for("adicionar_jogo"))
+
+    nome = form.nome.data
+    categoria = form.categoria.data
+    console = form.console.data
 
     novo_jogo = Jogos()
     novo_jogo.nome = nome
@@ -43,10 +51,11 @@ def criar():
     db.session.commit()
 
     upload_path = app.config["UPLOAD_PATH"]
-    imagem = request.files["imagem"]
-    extensao = Path(imagem.filename).suffix if imagem.filename else ""
-    timestamp = time.time()
-    imagem.save(f"{upload_path}/capa{novo_jogo.id}-{timestamp}{extensao}")
+    imagem = request.files.get("imagem")
+    if imagem and imagem.filename:
+        extensao = Path(imagem.filename).suffix
+        timestamp = time.time()
+        imagem.save(f"{upload_path}/capa{novo_jogo.id}-{timestamp}{extensao}")
 
     return redirect(url_for("index"))
 
@@ -58,32 +67,50 @@ def editar_jogo(id):
 
     jogo = Jogos.query.filter_by(id=id).first()
 
+    form = FormularioJogo()
+
+    if jogo:
+        form.nome.data = jogo.nome
+        form.categoria.data = jogo.categoria
+        form.console.data = jogo.console
+
     capa_jogo = recupera_imagem(id)
 
     return render_template(
-        "editar-jogo.html", titulo="Editar jogo", jogo=jogo, capa_jogo=capa_jogo
+        "editar-jogo.html",
+        titulo="Editar jogo",
+        id=id,
+        form=form,
+        capa_jogo=capa_jogo,
     )
 
 
 @app.route("/atualizar", methods=["POST"])
 def atualizar():
+    form = FormularioJogo(request.form)
     id = request.form["id"]
+
+    if not form.validate_on_submit():
+        flash("Dados inválidos no formulário")
+        return redirect(url_for("editar_jogo", id=id))
+
     jogo = Jogos.query.filter_by(id=id).first()
 
     if jogo:
-        jogo.nome = request.form["nome"]
-        jogo.categoria = request.form["categoria"]
-        jogo.console = request.form["console"]
+        jogo.nome = form.nome.data
+        jogo.categoria = form.categoria.data
+        jogo.console = form.console.data
 
         db.session.add(jogo)
         db.session.commit()
 
         upload_path = app.config["UPLOAD_PATH"]
-        imagem = request.files["imagem"]
-        extensao = Path(imagem.filename).suffix if imagem.filename else ""
-        timestamp = time.time()
-        deleta_imagem(jogo.id)
-        imagem.save(f"{upload_path}/capa{jogo.id}-{timestamp}{extensao}")
+        imagem = request.files.get("imagem")
+        if imagem and imagem.filename:
+            extensao = Path(imagem.filename).suffix
+            timestamp = time.time()
+            deleta_imagem(jogo.id)
+            imagem.save(f"{upload_path}/capa{jogo.id}-{timestamp}{extensao}")
 
     return redirect(url_for("index"))
 
