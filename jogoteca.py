@@ -1,14 +1,9 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf.csrf import CSRFProtect
+# importa as rotas e inicia o servidor
 
-app = Flask(__name__)
-app.config.from_pyfile("config.py")
+from app import app
 
-db = SQLAlchemy(app)
-csrf = CSRFProtect(app)
-
-from views import *
+import views_game  # noqa: F401
+import views_user  # noqa: F401
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    app.run(debug=True, port=8000)  # inicia o servidor

@@ -1,4 +1,4 @@
-from jogoteca import db
+from app import db
 
 
 class Jogos(db.Model):
