@@ -1,4 +1,13 @@
 {% extends "template.html" %} {% block conteudo %}
+
+<div class="d-flex justify-content-between">
+  <div>
+    <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+    <a class="btn btn-outline-danger" href="{{ url_for('logout') }}">Logout</a>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('adicionar_jogo') }}">Adicionar jogo</a>
+</div>
+
 <table class="table table-striped table-responsive table-bordered">
   <thead class="thead-default">
     <tr>

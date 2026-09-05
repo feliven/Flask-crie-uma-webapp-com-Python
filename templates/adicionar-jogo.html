@@ -20,7 +20,10 @@
       <label for="console">Console</label>
       <input type="text" id="console" name="console" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary btn-salvar">Salvar</button>
+    <div class="d-flex gap-3">
+      <button type="submit" class="btn btn-primary btn-salvar">Salvar</button>
+      <a class="btn btn-outline-danger" href="{{ url_for('index') }}">Voltar</a>
+    </div>
   </fieldset>
 </form>
 {% endblock %}
