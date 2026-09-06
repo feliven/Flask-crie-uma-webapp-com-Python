@@ -1,4 +1,6 @@
 import os
+import re
+
 from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import errorcode
@@ -7,24 +9,47 @@ from flask_bcrypt import generate_password_hash
 load_dotenv()
 
 print("Conectando...")
+db_admin_password = os.getenv("ADMIN_SENHA")
+db_user = os.getenv("SQL_USUARIO", "flask_app")
+db_password = os.getenv("SQL_SENHA")
+db_host = os.getenv("DB_HOST", "localhost")
+
+if not db_admin_password or not db_password:
+    raise SystemExit("Defina ADMIN_SENHA e SQL_SENHA no arquivo .env")
+
+if not re.fullmatch(r"[A-Za-z0-9_.%-]+", db_user + db_host):
+    raise SystemExit("SQL_USUARIO e DB_HOST possuem caracteres inválidos")
+
+account = f"`{db_user}`@`{db_host}`"
+
 try:
     conn = mysql.connector.connect(
-        host="127.0.0.1", user="root", password=os.getenv("SQL_SENHA")
+        host=db_host,
+        user="admin",
+        password=db_admin_password,
     )
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
         print("Existe algo errado no nome de usuário ou senha")
         raise SystemExit(1) from err
-    else:
-        print(err)
-        raise
+    print(err)
+    raise
 
 cursor = conn.cursor(dictionary=True)
 
+cursor.execute(
+    f"CREATE USER IF NOT EXISTS {account} IDENTIFIED BY %s",
+    (db_password,),
+)
+cursor.execute(
+    f"ALTER USER {account} IDENTIFIED BY %s",
+    (db_password,),
+)
+
 cursor.execute("DROP DATABASE IF EXISTS `jogoteca`;")
-
 cursor.execute("CREATE DATABASE `jogoteca`;")
-
+cursor.execute(f"GRANT ALL PRIVILEGES ON `jogoteca`.* TO {account}")
+cursor.execute("FLUSH PRIVILEGES;")
 cursor.execute("USE `jogoteca`;")
 
 # criando tabelas
@@ -62,12 +87,6 @@ for tabela_nome in TABLES:
 # inserindo usuários
 usuario_sql = "INSERT INTO usuarios (nome, nickname, senha) VALUES (%s, %s, %s)"
 usuarios = [
-    (
-        "Felipe",
-        "fvs",
-        generate_password_hash(os.getenv("SENHA_FELIPE")).decode("utf-8"),
-    ),
-    ("Bruno", "bd", generate_password_hash(os.getenv("SENHA_BRUNO")).decode("utf-8")),
     ("Laila", "dog", generate_password_hash(os.getenv("SENHA_DOG")).decode("utf-8")),
 ]
 cursor.executemany(usuario_sql, usuarios)

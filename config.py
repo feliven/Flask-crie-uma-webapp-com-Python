@@ -8,7 +8,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 SQLALCHEMY_DATABASE_URI = "{SGBD}://{usuario}:{senha}@{servidor}/{database}".format(
     SGBD="mysql+mysqlconnector",
-    usuario="root",
+    usuario="flask_app",
     senha=os.getenv("SQL_SENHA"),
     servidor="localhost",
     database="jogoteca",
