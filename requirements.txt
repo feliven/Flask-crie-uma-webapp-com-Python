@@ -5,11 +5,14 @@ Flask
 Flask-Bcrypt
 Flask-SQLAlchemy
 Flask-WTF
+gunicorn
+h11
 itsdangerous
 Jinja2
 MarkupSafe
 mysql-connector-python
 mysqlclient
+python-dotenv
 SQLAlchemy
 typing_extensions
 Werkzeug

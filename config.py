@@ -1,11 +1,15 @@
 import os
+from dotenv import load_dotenv
 
-SECRET_KEY = "CHAVE"
+load_dotenv()
+
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 SQLALCHEMY_DATABASE_URI = "{SGBD}://{usuario}:{senha}@{servidor}/{database}".format(
     SGBD="mysql+mysqlconnector",
     usuario="root",
-    senha="",
+    senha=os.getenv("SQL_SENHA"),
     servidor="localhost",
     database="jogoteca",
 )

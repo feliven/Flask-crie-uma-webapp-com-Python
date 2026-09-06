@@ -1,10 +1,16 @@
+import os
+from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import errorcode
 from flask_bcrypt import generate_password_hash
 
+load_dotenv()
+
 print("Conectando...")
 try:
-    conn = mysql.connector.connect(host="127.0.0.1", user="root", password="")
+    conn = mysql.connector.connect(
+        host="127.0.0.1", user="root", password=os.getenv("SQL_SENHA")
+    )
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
         print("Existe algo errado no nome de usuário ou senha")
@@ -56,9 +62,13 @@ for tabela_nome in TABLES:
 # inserindo usuários
 usuario_sql = "INSERT INTO usuarios (nome, nickname, senha) VALUES (%s, %s, %s)"
 usuarios = [
-    ("Felipe", "fvs", generate_password_hash("1234").decode("utf-8")),
-    ("Bruno", "bd", generate_password_hash("asdf").decode("utf-8")),
-    ("Laila", "dog", generate_password_hash("hjkl").decode("utf-8")),
+    (
+        "Felipe",
+        "fvs",
+        generate_password_hash(os.getenv("SENHA_FELIPE")).decode("utf-8"),
+    ),
+    ("Bruno", "bd", generate_password_hash(os.getenv("SENHA_BRUNO")).decode("utf-8")),
+    ("Laila", "dog", generate_password_hash(os.getenv("SENHA_DOG")).decode("utf-8")),
 ]
 cursor.executemany(usuario_sql, usuarios)
 
@@ -75,7 +85,6 @@ jogos_sql = "INSERT INTO jogos (nome, categoria, console) VALUES (%s, %s, %s)"
 jogos = [
     ("Tetris", "Puzzle", "Atari 2600"),
     ("Hollow Knight", "Metroidvania", "PS5"),
-    ("Tetris", "Puzzle", "Atari"),
     ("God of War", "Hack n Slash", "PS2"),
     ("Mortal Kombat", "Luta", "PS2"),
     ("Valorant", "FPS", "PC"),
