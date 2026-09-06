@@ -1,6 +1,6 @@
 {% extends "template.html" %} {% block conteudo %}
 
-<div class="d-flex justify-content-between">
+<div class="d-flex justify-content-between mb-2">
   <div>
     <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
     <a class="btn btn-outline-danger" href="{{ url_for('logout') }}">Logout</a>
@@ -8,26 +8,28 @@
   <a class="btn btn-primary" href="{{ url_for('adicionar_jogo') }}">Adicionar jogo</a>
 </div>
 
-<table class="table table-striped table-responsive table-bordered">
-  <thead class="thead-default">
-    <tr>
-      <th>Nome</th>
-      <th>Categoria</th>
-      <th>Console</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for jogo in jogos %}
-    <tr>
-      <td>{{ jogo.nome }}</td>
-      <td>{{ jogo.categoria }}</td>
-      <td>{{ jogo.console }}</td>
-      <td><a href="{{ url_for('editar_jogo', id=jogo.id) }}">Editar</a></td>
-      <td><a href="{{ url_for('deletar_jogo', id=jogo.id) }}">Remover</a></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-default">
+      <tr>
+        <th>Nome</th>
+        <th>Categoria</th>
+        <th>Console</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for jogo in jogos %}
+      <tr>
+        <td>{{ jogo.nome }}</td>
+        <td>{{ jogo.categoria }}</td>
+        <td>{{ jogo.console }}</td>
+        <td><a href="{{ url_for('editar_jogo', id=jogo.id) }}">Editar</a></td>
+        <td><a href="{{ url_for('deletar_jogo', id=jogo.id) }}">Remover</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
